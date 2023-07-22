@@ -3,14 +3,11 @@ import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn import model_selection, metrics
 from sklearn.model_selection import GridSearchCV  # Perforing grid search
-
 df = pd.read_csv('sj2.csv')
 train = df
 target = 'Infectious Complications'
 data_target_part = df['Infectious Complications']
 data_features_part = df[[x for x in df.columns if x != 'Infectious Complications']]
-
-
 def modelfit(alg, dtrain, predictors, useTrainCV=True, cv_folds=5, early_stopping_rounds=50):
     if useTrainCV:
         xgb_param = alg.get_xgb_params()
@@ -31,8 +28,6 @@ def modelfit(alg, dtrain, predictors, useTrainCV=True, cv_folds=5, early_stoppin
     print("\nModel Report")
     print("Accuracy : %.4g" % metrics.accuracy_score(dtrain['Infectious Complications'].values, dtrain_predictions))
     print("AUC Score (Train): %f" % metrics.roc_auc_score(dtrain['Infectious Complications'], dtrain_predprob))
-
-
 # Choose all predictors except target & IDcols
 A = [x for x in train.columns if x not in [target]]
 predictors = [x for x in train.columns if x not in [target]]
@@ -49,8 +44,7 @@ xgb1 = XGBClassifier(
     scale_pos_weight=1,
     seed=27)
 modelfit(xgb1, train, predictors)
-
-# 先对 max_depth，min_child_weight两组参数进行调参
+# Firstly, the parameters of max _ depth and min _ child _ weight are adjusted.
 param_test1 = {
     'max_depth': [3, 4, 5, 6, 7, 8],
     'min_child_weight': [1, 2, 3, 4, 5, 6]
@@ -76,7 +70,6 @@ grid1.cv_results_, grid1.best_params_, grid1.best_score_
 print("grid1.cv_results_", grid1.cv_results_,
       "grid1.best_params_", grid1.best_params_,
       "grid1.best_score_:", grid1.best_score_)
-
 param_test2 = {
     'gamma': [i / 10.0 for i in range(0, 5)]
 }
@@ -101,9 +94,6 @@ gsearch2.cv_results_, gsearch2.best_params_, gsearch2.best_score_
 print("gsearch2.cv_results_:", gsearch2.cv_results_,
       " gsearch2.best_params_:", gsearch2.best_params_,
       "gsearch2.best_score_:", gsearch2.best_score_)
-
-
-
 param_test3 = {
     'subsample': [i / 10.0 for i in range(1, 10, 2)],
     'colsample_bytree': [i / 10.0 for i in range(1, 10, 2)]
@@ -129,9 +119,8 @@ gsearch3.cv_results_, gsearch3.best_params_, gsearch3.best_score_
 print("gsearch3.cv_results_:", gsearch3.cv_results_,
       " gsearch3.best_params_:", gsearch3.best_params_,
       "gsearch3.best_score_:", gsearch3.best_score_)
-# 结果 subsample=0.9.colsample_bytree=0.5
-
-# 更加精确化,分度值0.05
+# Results subsample = 0.9.colsample _ bytree = 0.5
+# is more accurate, with a scale value of 0.05
 param_test4 = {
     'subsample': [i / 10.0 for i in range(8, 10)],
     'colsample_bytree': [i / 10.0 for i in range(4, 7)]
@@ -157,7 +146,6 @@ gsearch4.cv_results_, gsearch4.best_params_, gsearch4.best_score_
 print("gsearch4.cv_results_", gsearch4.cv_results_,
       "gsearch4.best_params_:", gsearch4.best_params_,
       "gsearch4.best_score_:", gsearch4.best_score_)
-
 param_test5 = {
     'subsample': [i / 10.0 for i in range(1, 10, 2)],
     'colsample_bytree': [i / 10.0 for i in range(1, 10, 2)]
@@ -183,10 +171,9 @@ gsearch5.cv_results_, gsearch5.best_params_, gsearch5.best_score_
 print("gsearch5.cv_results_:", gsearch5.cv_results_,
       " gsearch5.best_params_:", gsearch5.best_params_,
       "gsearch5.best_score_:", gsearch5.best_score_)
-# 测试结果 最优：subsample=0.9, colsample_bytree=0.5
-#         次优：subsample=0.95, colsample_bytree=0.5
-
-# 精确化
+# The test result is optimal : subsample = 0.9, colsample _ bytree = 0.5 
+# Suboptimal : subsample = 0.95, colsample _ bytree = 0.5
+# precision
 param_test6 = {
     'subsample': [i / 10.0 for i in range(8, 10)],
     'colsample_bytree': [i / 10.0 for i in range(4, 7)]
@@ -212,7 +199,6 @@ gsearch6.cv_results_, gsearch6.best_params_, gsearch6.best_score_
 print("gsearch6.cv_results_:", gsearch6.cv_results_,
       "gsearch6.best_params_:", gsearch6.best_params_,
       "gsearch6.best_score_:", gsearch6.best_score_)
-
 param_test7 = {
     'gamma': [i / 10.0 for i in range(0, 5)]
 }
@@ -237,7 +223,6 @@ gsearch7.cv_results_, gsearch7.best_params_, gsearch7.best_score_
 print("gsearch7.cv_results_:", gsearch7.cv_results_,
       " gsearch7.best_params_:", gsearch7.best_params_,
       "gsearch7.best_score_:", gsearch7.best_score_)
-
 param_test8 = {
     'subsample': [i / 10.0 for i in range(1, 10, 2)],
     'colsample_bytree': [i / 10.0 for i in range(1, 10, 2)]
@@ -263,7 +248,6 @@ gsearch8.cv_results_, gsearch8.best_params_, gsearch8.best_score_
 print("gsearch8.cv_results_:", gsearch8.cv_results_,
       " gsearch8.best_params_:", gsearch8.best_params_,
       "gsearch8.best_score_:", gsearch8.best_score_)
-
 param_test9 = {
     'subsample': [0.85, 0.9, 0.95],
     'colsample_bytree': [0.85, 0.9, 0.95]
@@ -289,7 +273,6 @@ gsearch9.cv_results_, gsearch9.best_params_, gsearch9.best_score_
 print("gsearch9.cv_results_:", gsearch9.cv_results_,
       " gsearch9.best_params_:", gsearch9.best_params_,
       "gsearch9.best_score_:", gsearch9.best_score_)
-
 param_test10 = {
     'subsample': [i / 10.0 for i in range(1, 10, 2)],
     'colsample_bytree': [i / 10.0 for i in range(1, 10, 2)]
@@ -315,7 +298,6 @@ gsearch10.cv_results_, gsearch10.best_params_, gsearch10.best_score_
 print("gsearch10.cv_results_:", gsearch10.cv_results_,
       "gsearch10.best_params_:", gsearch10.best_params_,
       "gsearch10.best_score_:", gsearch10.best_score_)
-
 param_test11 = {
     'subsample': [0.85, 0.9, 0.95],
     'colsample_bytree': [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
@@ -341,19 +323,14 @@ gsearch11.cv_results_, gsearch11.best_params_, gsearch11.best_score_
 print("gsearch11.cv_results_:", gsearch11.cv_results_,
       "gsearch11.best_params_:", gsearch11.best_params_,
       "gsearch11.best_score_:", gsearch11.best_score_)
-
-
-# 得到第一组参数：max_depth=3，min_child_weight=3，gamma=0.2,subsample=0.9,colsample_bytree=0.8
-# 得到第二组参数：max_depth=3，min_child_weight=3，gamma=0.2,subsample=0.8,colsample_bytree=0.8  
-# 得到第三组参数：max_depth=3，min_child_weight=3，gamma=0.4,subsample=0.9,colsample_bytree=0.5
-# 得到第四组参数：max_depth=3，min_child_weight=3，gamma=0.4,subsample=0.95,colsample_bytree=0.5
-# 得到第五组参数：max_depth=7，min_child_weight=4，gamma=0,subsample=0.9,colsample_bytree=0.95
-# 得到第六组参数：max_depth=7，min_child_weight=4，gamma=0,subsample=0.95,colsample_bytree=0.95
-# 得到第七组参数：max_depth=7，min_child_weight=4，gamma=0.1,subsample=0.9,colsample_bytree=0.15
-# 得到第八组参数：max_depth=7，min_child_weight=4，gamma=0.1,subsample=0.9,colsample_bytree=0.3
-
-
-
+# Get the first set of parameters : max _ depth = 3, min _ child _ weight = 3, gamma = 0.2, subsample = 0.9, colsample _ bytree = 0.8. 
+# Get the second set of parameters : max _ depth = 3, min _ child _ weight = 3, gamma = 0.2, subsample = 0.8, colsample _ bytree = 0.8. 
+# Get the third set of parameters : max _ depth = 3, min _ child _ weight = 3, gamma = 0.4, subsample = 0.9, colsample _ bytree = 0.5. 
+# Get the fourth set of parameters : max _ depth = 3, min _ child _ weight = 3, gamma = 0.4, subsample = 0.95, colsample _ bytree = 0.5. 
+# Get the fifth set of parameters : max _ depth = 7, min _ child _ weight = 4, gamma = 0, subsample = 0.9, colsample _ bytree = 0.95. 
+#Get the sixth set of parameters : max _ depth = 7, min _ child _ weight = 4, gamma = 0, subsample = 0.95, colsample _ bytree = 0.95. 
+# Get the seventh set of parameters : max _ depth = 7, min _ child _ weight = 4, gamma = 0.1, subsample = 0.9, colsample _ bytree =0.15
+# Get the eighth set of parameters : max _ depth = 7, min _ child _ weight = 4, gamma = 0.1, subsample = 0.9, colsample _ bytree = 0.3.
 param_test12 = {
     'reg_alpha': [1e-5, 1e-2, 0.1, 1, 100]
 }
@@ -377,8 +354,7 @@ gsearch12.cv_results_, gsearch12.best_params_, gsearch12.best_score_
 print("gsearch12.cv_results_:", gsearch12.cv_results_,
       " gsearch12.best_params_:", gsearch12.best_params_,
       "gsearch12.best_score_:", gsearch12.best_score_)
-# reg_alpha=0.00001继续调试
-
+# reg_alpha=0.00001     Continue debugging
 param_test13 = {
     'reg_alpha': [0, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3]
 }
@@ -402,7 +378,6 @@ gsearch13.cv_results_, gsearch13.best_params_, gsearch13.best_score_
 print("gsearch13.cv_results_:", gsearch13.cv_results_,
       "gsearch13.best_params_:", gsearch13.best_params_,
       "gsearch13.best_score_:", gsearch13.best_score_)
-
 param_test14 = {
     'reg_lambda': [0, 1e-6, 1e-5, 1e-4, 1e-3]
 }
