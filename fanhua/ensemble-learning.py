@@ -22,7 +22,7 @@ ypred6 = bst6.predict(dtest)
 ypred7 = bst7.predict(dtest)
 ypred8 = bst8.predict(dtest)
 ypred = 0.296*ypred1 + 0.148*ypred2 + 0.148*ypred3 + 0.074*ypred4 + 0.148*ypred5 + 0.074*ypred6 + 0.074*ypred7 + 0.038*ypred8
-# 保存数据
+#save data
 ypred = list(ypred)
 pd_ypred = pd.DataFrame(ypred, columns=['prob'])
 np.array(id)
